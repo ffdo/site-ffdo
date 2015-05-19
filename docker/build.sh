@@ -18,5 +18,5 @@ time make -j $(($(nproc)+1)) GLUON_TARGET=ar71xx-generic
 
 set +x
 echo -e "\nBUILD FINISHED\n"
-echo "You can copy the resulting images from the conatiner using:"
+echo "You can copy the resulting images from the container using:"
 echo -e "\ndocker cp ${HOSTNAME}:/usr/src/build/gluon/images <destination>\n"
