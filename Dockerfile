@@ -1,7 +1,7 @@
 FROM debian:jessie
 MAINTAINER Markus Lindenberg <markus@lindenberg.io>
 
-ENV GLUON_TAG v2014.4
+ENV GLUON_TAG v2015.1
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBIAN_PRIORITY critical
