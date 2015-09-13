@@ -10,6 +10,7 @@ git clone https://github.com/freifunk-gluon/gluon.git gluon -b "${GLUON_TAG}"
 mkdir -p gluon/site
 cp /usr/src/site.mk gluon/site/
 cp /usr/src/site.conf gluon/site/
+cp -r /usr/src/i18n gluon/site/
 
 # Build
 cd gluon

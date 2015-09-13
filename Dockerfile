@@ -1,7 +1,7 @@
 FROM debian:jessie
 MAINTAINER Markus Lindenberg <markus@lindenberg.io>
 
-ENV GLUON_TAG v2015.1.1
+ENV GLUON_TAG v2015.1.2
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBIAN_PRIORITY critical
@@ -14,6 +14,7 @@ RUN apt-get -y install --no-install-recommends ca-certificates python wget file 
 ADD docker/build.sh /usr/src/build.sh
 ADD site.mk /usr/src/site.mk
 ADD site.conf /usr/src/site.conf
+ADD i18n /usr/src/i18n
 
 RUN adduser --system --home /usr/src/build build
 USER build
