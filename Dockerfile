@@ -1,14 +1,14 @@
 FROM debian:jessie
 MAINTAINER Markus Lindenberg <markus@lindenberg.io>
 
-ENV GLUON_TAG v2015.1.2
+ENV GLUON_TAG master
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBIAN_PRIORITY critical
 ENV DEBCONF_NOWARNINGS yes
 
 RUN apt-get update
-RUN apt-get -y install --no-install-recommends ca-certificates python wget file git subversion build-essential gawk unzip libncurses5-dev zlib1g-dev && apt-get clean
+RUN apt-get -y install --no-install-recommends ca-certificates python wget file git subversion build-essential gawk unzip libncurses5-dev zlib1g-dev openssl libssl-dev && apt-get clean
 
 
 ADD docker/build.sh /usr/src/build.sh
