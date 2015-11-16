@@ -15,7 +15,12 @@ cp -r /usr/src/i18n gluon/site/
 # Build
 cd gluon
 make update
-time make -j $(($(nproc)+1)) BROKEN=1 GLUON_TARGET=ar71xx-generic
+
+for target in $(ls targets)
+do
+	echo "Building for target $target"
+	time make -j $(($(nproc)+1)) BROKEN=1 GLUON_TARGET=$target
+done
 
 set +x
 echo -e "\nBUILD FINISHED\n"
