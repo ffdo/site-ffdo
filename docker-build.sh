@@ -16,18 +16,15 @@ cp -r /usr/src/i18n gluon/site/
 cd gluon
 make update
 
-time make -j $(($(nproc)+1)) V=s BROKEN=1 GLUON_TARGET=ar71xx-generic
-time make -j $(($(nproc)+1)) V=s BROKEN=1 GLUON_TARGET=ar71xx-nand
-make dirclean
-time make -j $(($(nproc)+1)) V=s BROKEN=1 GLUON_TARGET=mpc85xx-generic
-make dirclean
-time make -j $(($(nproc)+1)) V=s BROKEN=1 GLUON_TARGET=x86-generic
-make dirclean
-time make -j $(($(nproc)+1)) V=s BROKEN=1 GLUON_TARGET=x86-64
-make dirclean
-make manifest GLUON_BRANCH=stable
+for target in $(ls targets/)
+do
+	if [ -d "targets/$target" ]; then
+		echo "Building for target $target"
+		time make -j $(($(nproc)+1)) BROKEN=1 GLUON_TARGET=$target
+	fi
+done
 
 set +x
 echo -e "\nBUILD FINISHED\n"
 echo "You can copy the resulting images from the container using:"
-echo -e "\ndocker cp ${HOSTNAME}:/usr/src/build/gluon/output <destination>\n"
+echo -e "\ndocker cp ${HOSTNAME}:/usr/src/build/gluon/images <destination>\n"
