@@ -16,10 +16,12 @@ cp -r /usr/src/i18n gluon/site/
 cd gluon
 make update
 
-for target in $(ls targets)
+for target in $(ls targets/)
 do
-	echo "Building for target $target"
-	time make -j $(($(nproc)+1)) BROKEN=1 GLUON_TARGET=$target
+	if [ -d "targets/$target" ]; then
+		echo "Building for target $target"
+		time make -j $(($(nproc)+1)) BROKEN=1 GLUON_TARGET=$target
+	fi
 done
 
 set +x
