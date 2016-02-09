@@ -15,7 +15,17 @@ cp -r /usr/src/i18n gluon/site/
 # Build
 cd gluon
 make update
+
 time make -j $(($(nproc)+1)) V=s BROKEN=1 GLUON_TARGET=ar71xx-generic
+make clean
+time make -j $(($(nproc)+1)) V=s BROKEN=1 GLUON_TARGET=ar71xx-nand
+make clean
+time make -j $(($(nproc)+1)) V=s BROKEN=1 GLUON_TARGET=mpc85xx-generic
+make clean
+time make -j $(($(nproc)+1)) V=s BROKEN=1 GLUON_TARGET=x86-generic
+make clean
+time make -j $(($(nproc)+1)) V=s BROKEN=1 GLUON_TARGET=x86-64
+make clean
 
 set +x
 echo -e "\nBUILD FINISHED\n"
