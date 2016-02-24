@@ -25,6 +25,7 @@ time make -j $(($(nproc)+1)) V=s BROKEN=1 GLUON_TARGET=x86-generic
 make dirclean
 time make -j $(($(nproc)+1)) V=s BROKEN=1 GLUON_TARGET=x86-64
 make dirclean
+make manifest GLUON_BRANCH=stable
 
 set +x
 echo -e "\nBUILD FINISHED\n"
