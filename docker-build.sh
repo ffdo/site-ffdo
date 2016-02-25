@@ -21,10 +21,13 @@ do
 	if [ -d "targets/$target" ]; then
 		echo "Building for target $target"
 		time make -j $(($(nproc)+1)) BROKEN=1 GLUON_TARGET=$target
+		make dirclean
 	fi
 done
+
+make manifest GLUON_BRANCH=stable
 
 set +x
 echo -e "\nBUILD FINISHED\n"
 echo "You can copy the resulting images from the container using:"
-echo -e "\ndocker cp ${HOSTNAME}:/usr/src/build/gluon/images <destination>\n"
+echo -e "\ndocker cp ${HOSTNAME}:/usr/src/build/gluon/output <destination>\n"
