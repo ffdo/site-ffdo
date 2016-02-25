@@ -34,7 +34,7 @@ broken = environ['GLUON_BROKEN'] if 'GLUON_BROKEN' in environ else '0'
 for target in targets:
     print('Building for target %s' % target)
     check_call('make -j %s GLUON_BRANCH=%s BROKEN=%s GLUON_TARGET=%s' % (cpu_count(), branch, broken, target), shell=True)
-    check_call('make dirclean', shell=True, check=True)
+    check_call('make dirclean', shell=True)
 
 check_call('make manifest GLUON_BRANCH=%s' % branch, shell=True)
 
