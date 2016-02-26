@@ -11,6 +11,8 @@ if isdir('gluon'):
     rmtree('gluon')
 check_call('git clone https://github.com/freifunk-gluon/gluon.git gluon -b "%s"' % environ['GLUON_TAG'], shell=True)
 
+makedirs('output')
+
 # Add site configuration
 makedirs('gluon/site')
 copy('/usr/src/site.mk', 'gluon/site')
@@ -33,12 +35,12 @@ broken = environ['GLUON_BROKEN'] if 'GLUON_BROKEN' in environ else '0'
 # Build
 for target in targets:
     print('Building for target %s' % target)
-    check_call('make -j %s GLUON_BRANCH=%s BROKEN=%s GLUON_TARGET=%s' % (cpu_count(), branch, broken, target), shell=True)
+    check_call('make -j %s GLUON_BRANCH=%s BROKEN=%s GLUON_TARGET=%s' % (cpu_count()+1, branch, broken, target), shell=True)
+    check_call('make manifest GLUON_BRANCH=%s' % branch, shell=True)
+    copytree('output', '../output/%s' % target)
     check_call('make dirclean', shell=True)
-
-check_call('make manifest GLUON_BRANCH=%s' % branch, shell=True)
 
 print('''BUILD FINISHED
 You can copy the resulting images from the container using:
-docker cp %s:/usr/src/build/gluon/output <destination>'''% environ.get('HOSTNAME'))
+docker cp %s:/usr/src/build/output <destination>'''% environ.get('HOSTNAME'))
 
