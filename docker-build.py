@@ -1,27 +1,66 @@
 #!/usr/bin/env python3
 
-from os import environ, makedirs, chdir, listdir
+from os import environ, makedirs, chdir, listdir, rename
 from os.path import isdir
-from subprocess import check_call
+from subprocess import call, check_call
 from shutil import *
 from multiprocessing import cpu_count
+from datetime import datetime
+from sys import stdout
 
-# Clean up and clone gluon
-if isdir('gluon'):
-    rmtree('gluon')
-check_call('git clone https://github.com/freifunk-gluon/gluon.git gluon -b "%s"' % environ['GLUON_TAG'], shell=True)
+site = environ['GLUON_SITE']
+release = environ['GLUON_RELEASE']
+branch = environ['GLUON_BRANCH']
+broken = environ['GLUON_BROKEN']
 
-makedirs('output')
+home = '/usr/src/build'
+
+gluondir = '%s/gluon' % home
+
+outdir = '%s/output/%s' % (home, release)
+logdir = '%s/log' % outdir
+
+siteconf = '/usr/src/site.conf'
+sitemk = '/usr/src/site.mk'
+i18ndir = '/usr/src/i18n'
+
+factorydir = '%s/images/factory' % outdir
+sysupdir = '%s/images/sysupgrade' % outdir
+modulesdir = '%s/modules' % outdir
+
+makedirs(factorydir)
+makedirs(sysupdir)
+makedirs(modulesdir)
+makedirs(logdir)
+
+start = datetime.now()
+
+def format_duration(d):
+    s = d.total_seconds()
+    return '%.2dh%.2dm%06.3fs' % (s//3600, (s//60)%60, s%60)
+
+# Clone Gluon
+if isdir(gluondir):
+    rmtree(gluondir)
+
+print('Cloning Gluon... ', end=''); stdout.flush()
+with open('%s/git.log' % logdir, 'w') as log:
+    check_call('git clone https://github.com/freifunk-gluon/gluon.git %s -b "%s"' % (gluondir, environ['GLUON_TAG']), stdout=log, stderr=log, shell=True)
+print('OK'); stdout.flush()
 
 # Add site configuration
-makedirs('gluon/site')
-copy('/usr/src/site.mk', 'gluon/site')
-copy('/usr/src/site.conf', 'gluon/site')
-copytree('/usr/src/i18n', 'gluon/site/i18n')
+sitedir = '%s/site' % gluondir
+makedirs(sitedir)
+copy(siteconf, sitedir)
+copy(sitemk, sitedir)
+copytree(i18ndir, '%s/i18n' % sitedir)
 
 # Prepare
-chdir('gluon')
-check_call('make update', shell=True)
+chdir(gluondir)
+print('Updating other repositories... ', end=''); stdout.flush()
+with open('%s/update.log' % logdir, 'w') as log:
+    check_call('make update', stdout=log, stderr=log, shell=True)
+print('OK'); stdout.flush()
 
 # Choose targets to build
 if 'GLUON_TARGETS' in environ:
@@ -29,18 +68,65 @@ if 'GLUON_TARGETS' in environ:
 else:
     targets = [f for f in listdir('targets') if isdir('targets/%s' % f)]
 
-branch = environ['GLUON_BRANCH'] if 'GLUON_BRANCH' in environ else 'stable'
-broken = environ['GLUON_BROKEN'] if 'GLUON_BROKEN' in environ else '0'
-
 # Build
 for target in targets:
-    print('Building for target %s' % target)
-    check_call('make -j %s GLUON_BRANCH=%s BROKEN=%s GLUON_TARGET=%s' % (cpu_count()+1, branch, broken, target), shell=True)
-    check_call('make manifest GLUON_BRANCH=%s' % branch, shell=True)
-    copytree('output', '../output/%s' % target)
-    check_call('make dirclean', shell=True)
+    print('Building for target %s... ' % target, end=''); stdout.flush()
+    arch, variant = target.split('-')
+    target_start = datetime.now()
 
-print('''BUILD FINISHED
+    with open('%s/%s_stdout.log' % (logdir, target), 'w') as logout, open('%s/%s_stderr.log' % (logdir, target), 'w') as logerr:
+        rc = call('make -j %s GLUON_BRANCH=%s BROKEN=%s GLUON_TARGET=%s' % (cpu_count()+1, branch, broken, target), stdout=logout, stderr=logerr, shell=True)
+    duration = format_duration(datetime.now() - target_start)
+    if rc == 0:
+        print('OK in', duration)
+
+        # Create manifest
+        print('Creating manifest... ', end=''); stdout.flush()
+        with open('%s/%s_manifest.log' % (logdir, target), 'w') as log:
+            rc = call('make manifest GLUON_BRANCH=%s BROKEN=%s GLUON_TARGET=%s' % (branch, broken, target), stdout=log, stderr=log, shell=True)
+        if rc == 0:
+            rename('output/images/sysupgrade/%s.manifest' % branch, 'output/images/sysupgrade/%s.%s.manifest' % (target, branch))
+            print('OK')
+        else:
+            print('FAILED')
+        stdout.flush()
+
+        # Move images to output
+        for f in listdir('output/images/factory'):
+            rename('output/images/factory/%s' % f, '%s/%s' % (factorydir, f))
+        for f in listdir('output/images/sysupgrade'):
+            rename('output/images/sysupgrade/%s' % f, '%s/%s' % (sysupdir, f))
+
+        # Move modules to output
+        makedirs('%s/%s' % (modulesdir, arch))
+        variantdir = '%s/%s/%s' % (modulesdir, arch, variant)
+        rename('output/modules/gluon-%s-%s/%s/%s' % (site, release, arch, variant), variantdir)
+
+        # Checksum modules
+        print('Creating SHA256 sums for modules... ', end=''); stdout.flush()
+        chdir(variantdir)
+        check_call('sha256sum * > sha256sum.txt', shell=True)
+        chdir(gluondir)
+        print('OK')
+    else:
+        print('FAILED after', duration)
+
+    # Clean up
+    print('Cleaning up...', end=''); stdout.flush()
+    with open('%s/%s_cleanup.log' % (logdir, target), 'w') as log:
+        check_call('make dirclean', stdout=log, stderr=log, shell=True)
+    print('OK'); stdout.flush()
+
+print('Creating SHA256 sums for images... ', end=''); stdout.flush()
+for d in (factorydir, sysupdir):
+    chdir(d)
+    check_call('sha256sum * > sha256sum.txt', shell=True)
+print('OK')
+
+print('''
+BUILD FINISHED in %s
+
 You can copy the resulting images from the container using:
-docker cp %s:/usr/src/build/output <destination>'''% environ.get('HOSTNAME'))
+docker cp %s:/usr/src/build/output <destination>
+'''% (format_duration(datetime.now() - start), environ['HOSTNAME']))
 

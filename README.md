@@ -13,7 +13,7 @@ See https://docs.docker.com/installation/#installation on how to get Docker.
 ## Cleaning up
 
 ```
-docker rm ffodbuild
+docker rm ffdobuild
 docker rmi ffdobuild
 ```
 

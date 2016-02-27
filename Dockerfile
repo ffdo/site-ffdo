@@ -1,11 +1,12 @@
 FROM debian:jessie
 MAINTAINER Markus Lindenberg <markus@lindenberg.io>
 
+ENV GLUON_SITE ffdo
 ENV GLUON_TAG v2016.1
-ENV DEFAULT_GLUON_RELEASE 0.8.0
-ENV GLUON_TARGETS ar71xx-generic ar71xx-nand mpc85xx-generic x86-generic x86-64
+ENV GLUON_RELEASE 0.8.0
 ENV GLUON_BRANCH stable
 ENV GLUON_BROKEN 1
+ENV GLUON_TARGETS ar71xx-generic ar71xx-nand mpc85xx-generic x86-generic x86-64
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBIAN_PRIORITY critical
