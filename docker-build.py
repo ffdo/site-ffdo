@@ -59,7 +59,7 @@ copytree(i18ndir, '%s/i18n' % sitedir)
 chdir(gluondir)
 print('Updating other repositories... ', end=''); stdout.flush()
 with open('%s/update.log' % logdir, 'w') as log:
-    check_call('make update', stdout=log, stderr=log, shell=True)
+    check_call('make update V=s', stdout=log, stderr=log, shell=True)
 print('OK'); stdout.flush()
 
 # Choose targets to build
@@ -75,7 +75,7 @@ for target in targets:
     target_start = datetime.now()
 
     with open('%s/%s_stdout.log' % (logdir, target), 'w') as logout, open('%s/%s_stderr.log' % (logdir, target), 'w') as logerr:
-        rc = call('make -j %s GLUON_BRANCH=%s BROKEN=%s GLUON_TARGET=%s' % (cpu_count()+1, branch, broken, target), stdout=logout, stderr=logerr, shell=True)
+        rc = call('make -j %s GLUON_BRANCH=%s BROKEN=%s GLUON_TARGET=%s V=s' % (cpu_count()+1, branch, broken, target), stdout=logout, stderr=logerr, shell=True)
     duration = format_duration(datetime.now() - target_start)
     if rc == 0:
         print('OK in', duration)
@@ -83,7 +83,7 @@ for target in targets:
         # Create manifest
         print('Creating manifest... ', end=''); stdout.flush()
         with open('%s/%s_manifest.log' % (logdir, target), 'w') as log:
-            rc = call('make manifest GLUON_BRANCH=%s BROKEN=%s GLUON_TARGET=%s' % (branch, broken, target), stdout=log, stderr=log, shell=True)
+            rc = call('make manifest GLUON_BRANCH=%s BROKEN=%s GLUON_TARGET=%s V=s' % (branch, broken, target), stdout=log, stderr=log, shell=True)
         if rc == 0:
             rename('output/images/sysupgrade/%s.manifest' % branch, 'output/images/sysupgrade/%s.%s.manifest' % (target, branch))
             print('OK')
@@ -114,7 +114,7 @@ for target in targets:
     # Clean up
     print('Cleaning up...', end=''); stdout.flush()
     with open('%s/%s_cleanup.log' % (logdir, target), 'w') as log:
-        check_call('make dirclean', stdout=log, stderr=log, shell=True)
+        check_call('make dirclean V=s', stdout=log, stderr=log, shell=True)
     print('OK'); stdout.flush()
 
 print('Creating SHA256 sums for images... ', end=''); stdout.flush()
