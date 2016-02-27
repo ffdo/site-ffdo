@@ -98,7 +98,10 @@ for target in targets:
             rename('output/images/sysupgrade/%s' % f, '%s/%s' % (sysupdir, f))
 
         # Move modules to output
-        makedirs('%s/%s' % (modulesdir, arch))
+        try:
+            makedirs('%s/%s' % (modulesdir, arch))
+        except FileExistsError:
+            pass
         variantdir = '%s/%s/%s' % (modulesdir, arch, variant)
         rename('output/modules/gluon-%s-%s/%s/%s' % (site, release, arch, variant), variantdir)
 
