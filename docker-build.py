@@ -106,9 +106,9 @@ for target in targets:
         rename('output/modules/gluon-%s-%s/%s/%s' % (site, release, arch, variant), variantdir)
 
         # Checksum modules
-        print('Creating SHA256 sums for modules... ', end=''); stdout.flush()
+        print('Creating SHA512 sums for modules... ', end=''); stdout.flush()
         chdir(variantdir)
-        check_call('sha256sum * > sha256sum.txt', shell=True)
+        check_call('sha512sum * > sha512sum.txt', shell=True)
         chdir(gluondir)
         print('OK')
     else:
@@ -120,10 +120,10 @@ for target in targets:
         check_call('make dirclean V=s', stdout=log, stderr=log, shell=True)
     print('OK'); stdout.flush()
 
-print('Creating SHA256 sums for images... ', end=''); stdout.flush()
+print('Creating SHA512 sums for images... ', end=''); stdout.flush()
 for d in (factorydir, sysupdir):
     chdir(d)
-    check_call('sha256sum * > sha256sum.txt', shell=True)
+    check_call('sha512sum * > sha512sum.txt', shell=True)
 print('OK')
 
 print('''
