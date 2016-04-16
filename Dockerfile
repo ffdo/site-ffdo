@@ -2,8 +2,8 @@ FROM debian:jessie
 MAINTAINER Markus Lindenberg <markus@lindenberg.io>
 
 ENV GLUON_SITE ffdo
-ENV GLUON_TAG v2016.1.2
-ENV GLUON_RELEASE 0.8.1
+ENV GLUON_TAG v2016.1.3
+ENV GLUON_RELEASE 0.8.2
 ENV GLUON_BRANCH stable
 ENV GLUON_BROKEN 1
 ENV GLUON_TARGETS ar71xx-generic ar71xx-nand mpc85xx-generic x86-generic x86-64
