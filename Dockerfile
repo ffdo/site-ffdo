@@ -7,14 +7,13 @@ ENV GLUON_RELEASE 0.9.2
 ENV GLUON_BRANCH stable
 ENV GLUON_BROKEN 1
 ENV GLUON_TARGETS ar71xx-generic ar71xx-nand mpc85xx-generic x86-generic x86-64
-#ENV GLUON_TARGETS ar71xx-generic ar71xx-nand mpc85xx-generic
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBIAN_PRIORITY critical
 ENV DEBCONF_NOWARNINGS yes
 
 RUN apt-get update
-RUN apt-get -y install --no-install-recommends ca-certificates python python3 wget file git subversion build-essential gawk unzip libncurses5-dev zlib1g-dev openssl libssl-dev && apt-get clean
+RUN apt-get -y install --no-install-recommends ca-certificates python python3 wget file git subversion build-essential gawk unzip libncurses5-dev zlib1g-dev openssl libssl-dev bsdmainutils && apt-get clean
 
 ADD docker-build.py /usr/src/build.py
 ADD site.mk /usr/src/site.mk
