@@ -27,6 +27,9 @@ GLUON_SITE_PACKAGES := \
 	haveged \
 	iptables \
 	iwinfo
+# from ffhh-packages:
+GLUON_SITE_PACKAGES += \
+	gluon-config-mode-reboot-ffhh
 
 ##	DEFAULT_GLUON_RELEASE
 #		version string to use for images
