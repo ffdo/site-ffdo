@@ -1,0 +1,14 @@
+# This file allows specifying additional repositories to use
+# when building gluon.
+
+#	for each feed name given, add the corresponding PACKAGES_* lines
+GLUON_SITE_FEEDS='ffhh'
+
+#	the  git repository from where to clone the package feed
+PACKAGES_FFHH_REPO=git://github.com/freifunkhamburg/ffhh-packages.git
+
+#	the version/commit of the git repository to clone
+PACKAGES_FFHH_COMMIT=c9d083f52384c2a52c303924de3960705c7c945b
+
+# the branch to check out
+PACKAGES_FFHH_BRANCH=master
