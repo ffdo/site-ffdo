@@ -2,11 +2,11 @@ FROM debian:jessie
 MAINTAINER Markus Lindenberg <markus@lindenberg.io>
 
 ENV GLUON_SITE ffdo
-ENV GLUON_TAG v2016.2.3
-ENV GLUON_RELEASE 0.10.2
+ENV GLUON_TAG v2016.2.7
+ENV GLUON_RELEASE 0.10.3
 ENV GLUON_BRANCH stable
 ENV GLUON_BROKEN 1
-ENV GLUON_TARGETS ar71xx-generic ar71xx-nand mpc85xx-generic x86-generic x86-64 brcm2708-bcm2708 brcm2708-bcm2709
+ENV GLUON_TARGETS ar71xx-generic ar71xx-nand brcm2708-bcm2708 brcm2708-bcm2709 mpc85xx-generic x86-generic x86-64 
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBIAN_PRIORITY critical
