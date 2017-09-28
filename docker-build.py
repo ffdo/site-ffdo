@@ -70,6 +70,7 @@ else:
 
 # Build
 for target in targets:
+    print('You can copy the log file from the container using: docker cp %s:%s/%s_stderr.log <destination>'% (environ['HOSTNAME'], logdir, target)); stdout.flush()
     print('Building for target %s... ' % target, end=''); stdout.flush()
     arch, variant = target.split('-')
     target_start = datetime.now()
@@ -103,7 +104,7 @@ for target in targets:
         except FileExistsError:
             pass
         variantdir = '%s/%s/%s' % (modulesdir, arch, variant)
-        rename('output/modules/gluon-%s-%s/%s/%s' % (site, release, arch, variant), variantdir)
+        rename('output/packages/gluon-%s-%s/%s/%s' % (site, release, arch, variant), variantdir)
 
         # Checksum modules
         print('Creating SHA512 sums for modules... ', end=''); stdout.flush()
@@ -115,10 +116,18 @@ for target in targets:
         print('FAILED after', duration)
 
     # Clean up
+    chdir(gluondir)
     print('Cleaning up...', end=''); stdout.flush()
     with open('%s/%s_cleanup.log' % (logdir, target), 'w') as log:
-        check_call('make dirclean V=s', stdout=log, stderr=log, shell=True)
-    print('OK'); stdout.flush()
+    print('Cleaning up...', end=''); stdout.flush()
+    with open('%s/%s_cleanup.log' % (logdir, target), 'w') as log:
+        # rc = call('make dirclean V=s', stdout=log, stderr=log, shell=True)
+        rc = call('make clean GLUON_TARGET=%s V=s' % (target), stdout=log, stderr=log, shell=True)
+    if rc == 0:
+        print('OK'); stdout.flush()
+    else:
+        print('FAILED')
+    stdout.flush()
 
 print('Creating SHA512 sums for images... ', end=''); stdout.flush()
 for d in (factorydir, sysupdir):
