@@ -115,12 +115,20 @@ for target in targets:
     else:
         print('FAILED after', duration)
 
-     # Clean up
+    # Clean up
+    chdir(gluondir)
     print('Cleaning up...', end=''); stdout.flush()
     with open('%s/%s_cleanup.log' % (logdir, target), 'w') as log:
-        check_call('make dirclean V=s', stdout=log, stderr=log, shell=True)
-    print('OK'); stdout.flush()
-
+        print('Cleaning up...', end=''); stdout.flush()
+    with open('%s/%s_cleanup.log' % (logdir, target), 'w') as log:
+        rc = call('make dirclean V=s', stdout=log, stderr=log, shell=True) # clean all
+        # rc = call('make clean GLUON_TARGET=%s V=s' % (target), stdout=log, stderr=log, shell=True) # clean target specific 
+    if rc == 0:
+        print('OK')
+    else:
+        print('FAILED')
+    stdout.flush()
+    
 print('Creating SHA512 sums for images... ', end=''); stdout.flush()
 for d in (factorydir, sysupdir):
     chdir(d)
