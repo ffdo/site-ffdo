@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from os import environ, makedirs, chdir, listdir, rename
-from os.path import isdir
+from os.path import isdir, exists
 from subprocess import call, check_call
 from shutil import *
 from multiprocessing import cpu_count
@@ -70,6 +70,7 @@ else:
 
 # Build
 for target in targets:
+    print('You can copy the log file from the container using: docker cp %s:%s/%s_stderr.log <destination>'% (environ['HOSTNAME'], logdir, target)); stdout.flush()
     print('Building for target %s... ' % target, end=''); stdout.flush()
     arch, variant = target.split('-')
     target_start = datetime.now()
@@ -98,27 +99,39 @@ for target in targets:
             rename('output/images/sysupgrade/%s' % f, '%s/%s' % (sysupdir, f))
 
         # Move modules to output
-        try:
-            makedirs('%s/%s' % (modulesdir, arch))
-        except FileExistsError:
-            pass
-        variantdir = '%s/%s/%s' % (modulesdir, arch, variant)
-        rename('output/modules/gluon-%s-%s/%s/%s' % (site, release, arch, variant), variantdir)
+        # Since lede modules are optional for some targets
+        modulesbuilddir = 'output/packages/gluon-%s-%s/%s/%s' % (site, release, arch, variant)
+        if exists(modulesbuilddir):
+            try:
+                makedirs('%s/%s' % (modulesdir, arch))
+            except FileExistsError:
+                pass
+            variantdir = '%s/%s/%s' % (modulesdir, arch, variant)
+            rename('output/packages/gluon-%s-%s/%s/%s' % (site, release, arch, variant), variantdir)
 
-        # Checksum modules
-        print('Creating SHA512 sums for modules... ', end=''); stdout.flush()
-        chdir(variantdir)
-        check_call('sha512sum * > sha512sum.txt', shell=True)
-        chdir(gluondir)
-        print('OK')
+            # Checksum modules
+            print('Creating SHA512 sums for modules... ', end=''); stdout.flush()
+            chdir(variantdir)
+            check_call('sha512sum * > sha512sum.txt', shell=True)
+            chdir(gluondir)
+        else:
+            print('No modules found for target %s....OK' % target)
     else:
         print('FAILED after', duration)
 
     # Clean up
+    chdir(gluondir)
     print('Cleaning up...', end=''); stdout.flush()
     with open('%s/%s_cleanup.log' % (logdir, target), 'w') as log:
-        check_call('make dirclean V=s', stdout=log, stderr=log, shell=True)
-    print('OK'); stdout.flush()
+        print('Cleaning up...', end=''); stdout.flush()
+    with open('%s/%s_cleanup.log' % (logdir, target), 'w') as log:
+        rc = call('make dirclean V=s', stdout=log, stderr=log, shell=True) # clean all
+        # rc = call('make clean GLUON_TARGET=%s V=s' % (target), stdout=log, stderr=log, shell=True) # clean target specific 
+    if rc == 0:
+        print('OK')
+    else:
+        print('FAILED')
+    stdout.flush()
 
 print('Creating SHA512 sums for images... ', end=''); stdout.flush()
 for d in (factorydir, sysupdir):
