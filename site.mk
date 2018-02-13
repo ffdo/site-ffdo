@@ -59,6 +59,4 @@ GLUON_ATH10K_MESH ?= ibss
 # Languages to include
 GLUON_LANGS ?= en de
 
-# VERSION 
-GLUON_RELEASE=0.11.2
 
