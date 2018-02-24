@@ -17,6 +17,7 @@ GLUON_SITE_PACKAGES := \
 	gluon-web-admin \
 	gluon-web-autoupdater \
 	gluon-web-network \
+	gluon-web-private-wifi \
 	gluon-web-wifi-config \
 	gluon-mesh-batman-adv-15 \
 	gluon-mesh-vpn-fastd \
@@ -58,6 +59,4 @@ GLUON_ATH10K_MESH ?= ibss
 # Languages to include
 GLUON_LANGS ?= en de
 
-# VERSION 
-GLUON_RELEASE=0.11.2
 

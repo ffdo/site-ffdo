@@ -125,8 +125,8 @@ for target in targets:
     with open('%s/%s_cleanup.log' % (logdir, target), 'w') as log:
         print('Cleaning up...', end=''); stdout.flush()
     with open('%s/%s_cleanup.log' % (logdir, target), 'w') as log:
-        rc = call('make dirclean V=s', stdout=log, stderr=log, shell=True) # clean all
-        # rc = call('make clean GLUON_TARGET=%s V=s' % (target), stdout=log, stderr=log, shell=True) # clean target specific 
+        # rc = call('make dirclean V=s', stdout=log, stderr=log, shell=True) # clean all
+        rc = call('make clean GLUON_TARGET=%s V=s' % (target), stdout=log, stderr=log, shell=True) # clean target specific 
     if rc == 0:
         print('OK')
     else:
