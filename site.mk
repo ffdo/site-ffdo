@@ -1,33 +1,35 @@
 ##	gluon site.mk makefile example
 
+##	GLUON_FEATURES
+#		Specify Gluon features/packages to enable;
+#		Gluon will automatically enable a set of packages
+#		depending on the combination of features listed
+
+GLUON_FEATURES := \
+	autoupdater \
+	ebtables-filter-multicast \
+	ebtables-filter-ra-dhcp \
+	ebtables-limit-arp \
+	mesh-batman-adv-15 \
+	mesh-vpn-fastd \
+	radvd \
+	respondd \
+	status-page \
+	web-advanced \
+	web-private-wifi \
+	web-wizard
+
 ##	GLUON_SITE_PACKAGES
-#		specify Gluon/LEDE packages to include here
+#		Specify additional Gluon/OpenWrt packages to include here;
+#		A minus sign may be prepended to remove a packages from the
+#		selection that would be enabled by default or due to the
+#		chosen feature flags
 
 GLUON_SITE_PACKAGES := \
-	gluon-respondd \
-	gluon-autoupdater \
-	gluon-config-mode-autoupdater \
-	gluon-config-mode-contact-info \
-	gluon-config-mode-core \
-	gluon-config-mode-geo-location \
-	gluon-config-mode-hostname \
-	gluon-config-mode-mesh-vpn \
-	gluon-ebtables-filter-multicast \
-	gluon-ebtables-filter-ra-dhcp \
-	gluon-web-admin \
-	gluon-web-autoupdater \
-	gluon-web-network \
-	gluon-web-private-wifi \
-	gluon-web-wifi-config \
-	gluon-mesh-batman-adv-15 \
-	gluon-mesh-vpn-fastd \
-	gluon-radvd \
-	gluon-setup-mode \
-	gluon-status-page \
 	haveged \
-	iptables \
-	iwinfo
-	
+	iwinfo \
+	iptables
+
 ##	DEFAULT_GLUON_RELEASE
 #		version string to use for images
 #		gluon relies on
