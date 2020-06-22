@@ -3,12 +3,13 @@ MAINTAINER Cajus Kamer <Cajus.Kamer@arcor.de>
 
 ENV GLUON_SITE ffdo
 
-ENV GLUON_TAG v2018.1.1
-ENV GLUON_RELEASE 0.12-test
+ENV GLUON_TAG v2020.1.3
+ENV GLUON_RELEASE 0.14-test
 
 ENV GLUON_BRANCH stable
 ENV GLUON_BROKEN 1
-ENV GLUON_TARGETS ar71xx-generic ar71xx-nand ar71xx-tiny ar71xx-mikrotik brcm2708-bcm2708 brcm2708-bcm2709 mpc85xx-generic ramips-mt7621 x86-generic x86-64 
+ENV GLUON_TARGETS ar71xx-generic ar71xx-nand ar71xx-tiny ar71xx-mikrotik brcm2708-bcm2708 brcm2708-bcm2709 mpc85xx-generic ramips-mt7621 x86-generic x86-64 ramips-mt76x8
+ENV GLUON_DEPRECATED 0
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBIAN_PRIORITY critical
